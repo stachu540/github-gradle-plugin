@@ -14,3 +14,16 @@ cache:
     - $HOME/.gradle/wrapper/
 
 install: chmod +x ./gradlew
+
+jobs:
+  include:
+    - stage: deploy
+      name: "Github Upload"
+      jdk: openjdk8
+      script: ./gradlew githubUpload -x test
+      if: tag IS present
+    - stage: deploy
+      name: "Gradle Release"
+      jdk: openjdk8
+      script: ./gradlew publishPlugins -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
+      if: tag IS present
